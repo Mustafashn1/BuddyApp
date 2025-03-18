@@ -12,5 +12,6 @@
         public long Durum { get; set; }
         public string? Notlar { get; set; }
 
+
     }
 }
