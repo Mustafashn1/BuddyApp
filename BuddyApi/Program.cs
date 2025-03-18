@@ -1,5 +1,6 @@
 using BuddyApi.Data;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,15 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+var configuration = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.json")
+    .Build();
+
+var log = new LoggerConfiguration()
+    .WriteTo.File("log.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
