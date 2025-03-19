@@ -23,26 +23,52 @@ namespace BuddyApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Gorev>>> GetTasks()
         {
-            return await _context.Gorevler.ToListAsync();
+            try
+            {
+                return await _context.Gorevler.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Tumünü getirilirken hata oluştu");
+                throw;
+            }
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Gorev>> GetTask(int id)
         {
-            var task = await _context.Gorevler.FindAsync(id);
-            if (task == null)
-                return NotFound();
+            try
+            {
+                var task = await _context.Gorevler.FindAsync(id);
+                if (task == null)
+                    return NotFound();
 
-            return task;
+                return task;
+            }
+            catch ( Exception ex)
+            {
+                Log.Error(ex, "Id ye göre getirilirken hata oluştu");
+
+                throw;
+            }
         }
 
         [HttpPost]
         public async Task<ActionResult<Gorev>> CreateTask(Gorev task)
         {
-            _context.Gorevler.Add(task);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Gorevler.Add(task);
+                await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetTask), new { id = task.Id }, task);
+                return CreatedAtAction(nameof(GetTask), new { id = task.Id }, task);
+            }
+            catch ( Exception ex)
+            {
+                Log.Error(ex, "Eklenirken hata oluştu");
+
+                throw;
+            }
         }
 
         [HttpPut("{id}")]
@@ -51,10 +77,18 @@ namespace BuddyApi.Controllers
             if (id != task.Id)
                 return BadRequest();
 
-            _context.Entry(task).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Entry(task).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
 
-            return NoContent();
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Güncellerken hata oluştu");
+                throw;
+            }
         }
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
